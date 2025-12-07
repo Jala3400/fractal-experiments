@@ -22,17 +22,20 @@
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        // Get container size
+        const rect = canvas.getBoundingClientRect();
+        width = rect.width - 20;
+        height = rect.height - 20;
+
         // handle high DPI displays
         const dpr =
             typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
         canvas.width = Math.max(1, Math.floor(width * dpr));
         canvas.height = Math.max(1, Math.floor(height * dpr));
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         // background
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "#0b1220";
         ctx.fillRect(0, 0, width, height);
 
         ctx.lineWidth = strokeWidth;
@@ -60,15 +63,12 @@
     });
 
     onMount(() => {
-        const resize = () => {
-            const w = Math.max(300, Math.floor(window.innerWidth * 0.6));
-            const h = Math.max(240, Math.floor(window.innerHeight * 0.7));
-            width = w;
-            height = h;
-        };
-        resize();
-        window.addEventListener("resize", resize);
-        return () => window.removeEventListener("resize", resize);
+        // Resize observer to redraw on container size change
+        const resizeObserver = new ResizeObserver(() => {
+            if (canvas) draw();
+        });
+        if (canvas) resizeObserver.observe(canvas);
+        return () => resizeObserver.disconnect();
     });
 </script>
 
@@ -114,8 +114,6 @@
             <label for="color-input">Color</label>
             <input id="color-input" type="color" bind:value={color} />
 
-                <!-- theme controls removed -->
-
             <hr />
             <button
                 onclick={() => {
@@ -131,20 +129,33 @@
     </aside>
 
     <div class="canvas-wrap">
-        <canvas bind:this={canvas} {width} {height}></canvas>
+        <canvas bind:this={canvas} style="width:100%; height:100%;"></canvas>
     </div>
 </div>
 
 <style>
+    :global(body) {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+    }
+
     .page {
         display: flex;
         gap: 12px;
-        padding: 12px;
+        background: #07101a;
+        color: #e6eef6;
+        height: 100%;
     }
     .sidebar {
         width: 260px;
         padding: 8px;
-        border-right: 1px solid #e5e7eb;
+        border-right: 1px solid #133045;
+        background: #081421;
+    }
+    h3 {
+        color: #cfe6ff;
     }
     .canvas-wrap {
         flex: 1;
@@ -156,19 +167,50 @@
         display: block;
         margin: 8px 0 4px;
         font-size: 0.9rem;
+        color: #cfe6ff;
     }
     .controls input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
         width: 100%;
+        height: 5px;
+        background: #092131;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: opacity 0.2s;
+        transition: opacity 0.2s;
+        border: 1px solid #123246;
+    }
+    .controls input[type="range"]:hover {
+        opacity: 1;
+    }
+    .controls input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1em;
+        height: 1em;
+        background: #274e63;
+        cursor: pointer;
+    }
+    .controls input[type="range"]::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: #274e63;
+        cursor: pointer;
     }
     .controls select,
     .controls input[type="color"] {
         width: 100%;
+        background: #092131;
+        color: #d8eefc;
+        border: 1px solid #123246;
     }
     .controls button {
         padding: 6px 8px;
         border-radius: 4px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid #274e63;
         background: transparent;
+        color: #d8eefc;
         cursor: pointer;
     }
     /* dark mode removed */
