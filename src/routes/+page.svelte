@@ -6,6 +6,8 @@
         { id: "koch", label: "Koch Curve / Snowflake" },
         { id: "dragon", label: "Dragon Curve" },
         { id: "sierpinski", label: "Sierpinski (L-system)" },
+        { id: "hilbert", label: "Hilbert Curve" },
+        { id: "plant", label: "Plant" },
     ];
 
     let type = $state<FractalType>("koch");
@@ -24,8 +26,8 @@
 
         // Get container size
         const rect = canvas.getBoundingClientRect();
-        width = rect.width - 20;
-        height = rect.height - 20;
+        width = rect.width;
+        height = rect.height;
 
         // handle high DPI displays
         const dpr =
@@ -33,10 +35,6 @@
         canvas.width = Math.max(1, Math.floor(width * dpr));
         canvas.height = Math.max(1, Math.floor(height * dpr));
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        // background
-        ctx.fillStyle = "#0b1220";
-        ctx.fillRect(0, 0, width, height);
 
         ctx.lineWidth = strokeWidth;
         ctx.lineCap = "round";
@@ -129,7 +127,7 @@
     </aside>
 
     <div class="canvas-wrap">
-        <canvas bind:this={canvas} style="width:100%; height:100%;"></canvas>
+        <canvas bind:this={canvas} class="canvas-class"></canvas>
     </div>
 </div>
 
@@ -163,6 +161,12 @@
         justify-content: center;
         align-items: center;
     }
+
+    .canvas-class {
+        width: 80%;
+        height: 80%;
+    }
+
     .controls label {
         display: block;
         margin: 8px 0 4px;

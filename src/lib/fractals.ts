@@ -1,4 +1,4 @@
-export type FractalType = 'koch' | 'dragon' | 'sierpinski';
+export type FractalType = 'koch' | 'dragon' | 'sierpinski' | 'hilbert' | 'plant';
 
 type Point = { x: number; y: number };
 
@@ -83,6 +83,16 @@ export function generateFractalPoints(
     const rules: Record<string, string> = { A: 'B-A-B', B: 'A+B+A' };
     const s = lsystem(axiom, rules, iterations);
     pts = turtle(s, 60, step);
+  } else if (type === 'hilbert') {
+    const axiom = 'A';
+    const rules: Record<string, string> = { A: '-BF+AFA+FB-', B: '+AF-BFB-FA+' };
+    const s = lsystem(axiom, rules, iterations);
+    pts = turtle(s.replace(/A|B/g, 'F'), 90, step);
+  } else if (type === 'plant') {
+    const axiom = 'F';
+    const rules: Record<string, string> = { F: 'F[+F]F[-F]F' };
+    const s = lsystem(axiom, rules, iterations);
+    pts = turtle(s, 25, step);
   }
   return normalize(pts, width, height, 12);
 }
