@@ -7,11 +7,7 @@
         parseRulesText,
         type FractalDef,
     } from "$lib/fractals";
-
-    const types = Object.entries(fractals).map(([id, fractal]) => ({
-        id,
-        label: fractal.label || id,
-    }));
+    import FractalControls from "$lib/components/organisms/FractalControls.svelte";
 
     let type = $state<FractalType>("koch");
     let currentDef = $state<FractalDef>({ ...fractals["koch"] });
@@ -96,91 +92,7 @@
 <div class="page">
     <aside class="sidebar">
         <h3>Fractal options</h3>
-        <div class="controls">
-            <label for="type-select">Type</label>
-            <select id="type-select" bind:value={type}>
-                {#each types as t}
-                    <option value={t.id}>{t.label}</option>
-                {/each}
-            </select>
-
-            <label for="iterations-input">Iterations: {iterations}</label>
-            <input
-                id="iterations-input"
-                type="range"
-                min="0"
-                max="12"
-                bind:value={iterations}
-            />
-
-            <label for="step-input">Segment length: {step}</label>
-            <input
-                id="step-input"
-                type="range"
-                min="1"
-                max="128"
-                bind:value={step}
-            />
-
-            <label for="stroke-width-input">Stroke width: {strokeWidth}</label>
-            <input
-                id="stroke-width-input"
-                type="range"
-                min="0.5"
-                max="12"
-                step="0.5"
-                bind:value={strokeWidth}
-            />
-
-            <label for="color-input">Color</label>
-            <input id="color-input" type="color" bind:value={color} />
-
-            <hr />
-            <button
-                onclick={() => {
-                    iterations = Math.max(0, iterations - 1);
-                }}>Less iterations</button
-            >
-            <button
-                onclick={() => {
-                    iterations = iterations + 1;
-                }}>More iterations</button
-            >
-
-            <hr />
-
-            <label for="axiom-input">Axiom</label>
-            <input id="axiom-input" type="text" bind:value={currentDef.axiom} />
-
-            <label for="rules-input">Rules</label>
-            <textarea
-                id="rules-input"
-                bind:value={rulesText}
-                onchange={updateRules}
-            ></textarea>
-
-            <label for="angle-input">Angle (degrees):</label>
-            <input
-                id="angle-number-input"
-                type="number"
-                max="360"
-                bind:value={currentDef.angle}
-            />
-            <input
-                id="angle-input"
-                type="range"
-                max="360"
-                step="15"
-                bind:value={currentDef.angle}
-            />
-
-            <label for="draw-letters-input">Draw Letters</label>
-            <input
-                id="draw-letters-input"
-                type="text"
-                bind:value={currentDef.drawLetters}
-            />
-        </div>
+        <FractalControls bind:type bind:currentDef bind:rulesText bind:iterations bind:step bind:strokeWidth bind:color {updateRules} />
     </aside>
 
     <div class="canvas-wrap">
@@ -224,62 +136,5 @@
         height: 80%;
     }
 
-    .controls label {
-        display: block;
-        margin: 8px 0 4px;
-        font-size: 0.9rem;
-        color: #cfe6ff;
-    }
-    .controls input[type="range"] {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 100%;
-        height: 5px;
-        background: #092131;
-        outline: none;
-        opacity: 0.7;
-        -webkit-transition: opacity 0.2s;
-        transition: opacity 0.2s;
-        border: 1px solid #123246;
-    }
-    .controls input[type="range"]:hover {
-        opacity: 1;
-    }
-    .controls input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 1em;
-        height: 1em;
-        background: #274e63;
-        cursor: pointer;
-    }
-    .controls input[type="range"]::-moz-range-thumb {
-        width: 25px;
-        height: 25px;
-        background: #274e63;
-        cursor: pointer;
-    }
-    .controls select,
-    .controls input[type="color"],
-    .controls input[type="text"],
-    .controls input[type="number"],
-    .controls textarea {
-        width: 100%;
-        background: #092131;
-        color: #d8eefc;
-        border: 1px solid #123246;
-    }
-    .controls textarea {
-        resize: vertical;
-        min-height: 60px;
-    }
-    .controls button {
-        padding: 6px 8px;
-        border-radius: 4px;
-        border: 1px solid #274e63;
-        background: transparent;
-        color: #d8eefc;
-        cursor: pointer;
-    }
     /* dark mode removed */
 </style>
