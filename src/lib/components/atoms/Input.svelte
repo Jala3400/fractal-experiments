@@ -26,9 +26,9 @@
 
 <style>
     input {
-        background: #092131;
-        color: #d8eefc;
-        border: 1px solid #123246;
+        background: var(--bg-input);
+        color: var(--text-tertiary);
+        border: 1px solid var(--border-secondary);
         width: 100%;
         margin: 0;
     }
@@ -38,12 +38,12 @@
         appearance: none;
         width: 100%;
         height: 5px;
-        background: #092131;
+        background: var(--bg-input);
         outline: none;
         opacity: 0.7;
         -webkit-transition: opacity 0.2s;
         transition: opacity 0.2s;
-        border: 1px solid #123246;
+        border: 1px solid var(--border-secondary);
     }
 
     input[type="range"]:hover {
@@ -55,14 +55,14 @@
         appearance: none;
         width: 1em;
         height: 1em;
-        background: #274e63;
+        background: var(--border-tertiary);
         cursor: pointer;
     }
 
     input[type="range"]::-moz-range-thumb {
         width: 25px;
         height: 25px;
-        background: #274e63;
+        background: var(--border-tertiary);
         cursor: pointer;
     }
 </style>

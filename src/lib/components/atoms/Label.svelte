@@ -16,7 +16,7 @@
         display: block;
         margin: 8px 0 4px;
         font-size: 0.9rem;
-        color: #cfe6ff;
+        color: var(--text-secondary);
 
         white-space: nowrap;
     }

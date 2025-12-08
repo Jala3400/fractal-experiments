@@ -17,8 +17,8 @@
 <style>
     select {
         width: 100%;
-        background: #092131;
-        color: #d8eefc;
-        border: 1px solid #123246;
+        background: var(--bg-input);
+        color: var(--text-tertiary);
+        border: 1px solid var(--border-secondary);
     }
 </style>

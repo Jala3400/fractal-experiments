@@ -110,14 +110,14 @@
         flex-direction: column;
         gap: 8px;
         padding: 8px;
-        color: #d8eefc;
+        color: var(--text-tertiary);
         box-sizing: border-box;
         width: 250px;
     }
 
     .controls hr {
         border: none;
-        border-top: 1px solid #123246;
+        border-top: 1px solid var(--border-secondary);
         margin: 8px 0;
     }
 </style>

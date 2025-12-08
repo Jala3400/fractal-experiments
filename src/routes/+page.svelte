@@ -92,7 +92,16 @@
 <div class="page">
     <aside class="sidebar">
         <h3>Fractal options</h3>
-        <FractalControls bind:type bind:currentDef bind:rulesText bind:iterations bind:step bind:strokeWidth bind:color {updateRules} />
+        <FractalControls
+            bind:type
+            bind:currentDef
+            bind:rulesText
+            bind:iterations
+            bind:step
+            bind:strokeWidth
+            bind:color
+            {updateRules}
+        />
     </aside>
 
     <div class="canvas-wrap">
@@ -101,28 +110,19 @@
 </div>
 
 <style>
-    :global(body) {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100vh;
-    }
-
     .page {
         display: flex;
-        gap: 12px;
-        background: #07101a;
-        color: #e6eef6;
+        background: var(--bg-primary);
+        color: var(--text-primary);
         height: 100%;
     }
     .sidebar {
-        width: 260px;
         padding: 8px;
-        border-right: 1px solid #133045;
-        background: #081421;
+        border-right: 1px solid var(--border-primary);
+        background: var(--bg-secondary);
     }
     h3 {
-        color: #cfe6ff;
+        color: var(--text-secondary);
     }
     .canvas-wrap {
         flex: 1;
@@ -135,6 +135,4 @@
         width: 80%;
         height: 80%;
     }
-
-    /* dark mode removed */
 </style>

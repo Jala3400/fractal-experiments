@@ -15,9 +15,9 @@
     button {
         padding: 6px 8px;
         border-radius: 4px;
-        border: 1px solid #274e63;
+        border: 1px solid var(--border-tertiary);
         background: transparent;
-        color: #d8eefc;
+        color: var(--text-tertiary);
         cursor: pointer;
     }
 </style>
