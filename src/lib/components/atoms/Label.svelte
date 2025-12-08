@@ -14,8 +14,8 @@
 <style>
     label {
         display: block;
-        margin: 4px 0;
-        font-size: 0.9rem;
+        margin: 0.25em 0;
+        font-size: 0.9em;
         color: var(--text-secondary);
 
         white-space: nowrap;

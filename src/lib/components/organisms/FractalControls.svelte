@@ -108,16 +108,15 @@
     .controls {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        padding: 8px;
+        gap: 0.5em;
+        padding: 0.5em;
         color: var(--text-tertiary);
         box-sizing: border-box;
-        width: 250px;
     }
 
     .controls hr {
         border: none;
         border-top: 1px solid var(--border-secondary);
-        margin: 8px 0;
+        margin: 0.5em 0;
     }
 </style>

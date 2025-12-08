@@ -37,7 +37,7 @@
         -webkit-appearance: none;
         appearance: none;
         width: 100%;
-        height: 5px;
+        height: 0.5em;
         background: var(--bg-input);
         outline: none;
         opacity: 0.7;
@@ -60,8 +60,8 @@
     }
 
     input[type="range"]::-moz-range-thumb {
-        width: 25px;
-        height: 25px;
+        width: 1.5em;
+        height: 1.5em;
         background: var(--border-tertiary);
         cursor: pointer;
     }

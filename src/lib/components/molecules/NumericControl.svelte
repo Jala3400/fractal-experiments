@@ -26,12 +26,12 @@
     .numeric-control {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 0.25em;
     }
 
     .input-row {
         display: flex;
         align-items: baseline;
-        gap: 8px;
+        gap: 0.5em;
     }
 </style>

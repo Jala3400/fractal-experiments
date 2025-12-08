@@ -13,8 +13,8 @@
 
 <style>
     button {
-        padding: 6px 8px;
-        border-radius: 4px;
+        padding: 0.375em 0.5em;
+        border-radius: 0.25em;
         border: 1px solid var(--border-tertiary);
         background: transparent;
         color: var(--text-tertiary);

@@ -18,6 +18,5 @@
         color: var(--text-tertiary);
         border: 1px solid var(--border-secondary);
         resize: vertical;
-        min-height: 60px;
     }
 </style>

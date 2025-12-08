@@ -118,9 +118,10 @@
         overflow: hidden;
     }
     .sidebar {
-        padding: 8px;
+        padding: 0.5em;
         border-right: 1px solid var(--border-primary);
         background: var(--bg-secondary);
+        width: 15em;
     }
     h3 {
         color: var(--text-secondary);
