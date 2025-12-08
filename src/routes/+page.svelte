@@ -29,10 +29,10 @@
             .join("\n");
     });
 
-    // Update currentDef.rules when rulesText changes
-    $effect(() => {
+    // Do not use $effect here to avoid infinite loop
+    function updateRules() {
         currentDef.rules = parseRulesText(rulesText);
-    });
+    }
 
     let iterations = $state(3);
     let step = $state(12);
@@ -153,7 +153,11 @@
             <input id="axiom-input" type="text" bind:value={currentDef.axiom} />
 
             <label for="rules-input">Rules</label>
-            <textarea id="rules-input" bind:value={rulesText}></textarea>
+            <textarea
+                id="rules-input"
+                bind:value={rulesText}
+                onchange={updateRules}
+            ></textarea>
 
             <label for="angle-input">Angle (degrees):</label>
             <input
