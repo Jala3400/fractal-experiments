@@ -1,4 +1,13 @@
-export type FractalType = 'koch' | 'dragon' | 'sierpinski' | 'hilbert' | 'plant';
+export type FractalType = 'koch' | 'dragon' | 'sierpinski' | 'hilbert' | 'plant' | 'gosper' | 'peano' | 'custom';
+
+export type FractalDef = {
+  id: FractalType;
+  label?: string;
+  axiom: string;
+  rules: Record<string, string>;
+  angle?: number;
+  drawLetters?: string; // which symbols should be treated as drawing moves (replaced with 'F')
+};
 
 type Point = { x: number; y: number };
 
@@ -19,6 +28,7 @@ function turtle(commands: string, angleDeg: number, step: number) {
   let angle = 0; // radians
   pts.push({ x, y });
   const a = (angleDeg * Math.PI) / 180;
+  const stack: Array<{ x: number; y: number; angle: number }> = [];
   for (const ch of commands) {
     if (ch === 'F' || ch === 'f') {
       x += Math.cos(angle) * step;
@@ -28,9 +38,133 @@ function turtle(commands: string, angleDeg: number, step: number) {
       angle -= a;
     } else if (ch === '-') {
       angle += a;
+    } else if (ch === '[') {
+      stack.push({ x, y, angle });
+    } else if (ch === ']') {
+      const s = stack.pop();
+      if (s) {
+        x = s.x;
+        y = s.y;
+        angle = s.angle;
+        pts.push({ x, y });
+      }
     }
   }
   return pts;
+}
+
+// parse lines like "X=someRule" into a rules object
+export function parseRulesText(rulesText: string) {
+  const rules: Record<string, string> = {};
+  const lines = rulesText.split(/\r?\n/);
+  for (let ln of lines) {
+    ln = ln.trim();
+    if (!ln) continue;
+    // allow a form like "A = A+B" or "F=F+F" or "X += Y" ??? stick to '='
+    const m = ln.match(/^([^=\s])\s*=\s*(.+)$/);
+    if (m) rules[m[1]] = m[2];
+  }
+  return rules;
+}
+
+// generate points from arbitrary axiom and rules
+export function generateCustomFractalPoints(
+  axiom: string,
+  rulesText: string,
+  angle = 90,
+  iterations = 1,
+  step = 8,
+  width = 800,
+  height = 600,
+  drawLetters = 'F'
+) {
+  const rules = parseRulesText(rulesText);
+  const s = lsystem(axiom, rules, iterations);
+  // replace drawLetters with 'F' so turtle moves on those characters
+  const escaped = drawLetters.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const commands = s.replace(new RegExp('[' + escaped + ']', 'g'), 'F');
+  const pts = turtle(commands, angle, step);
+  return normalize(pts, width, height, 12);
+}
+
+// canonical fractal definitions
+export const fractals: Record<FractalType, FractalDef> = {
+  koch: {
+    id: 'koch',
+    label: 'Koch Curve / Snowflake',
+    axiom: 'F',
+    rules: { F: 'F+F--F+F' },
+    angle: 60,
+    drawLetters: 'F'
+  },
+  dragon: {
+    id: 'dragon',
+    label: 'Dragon Curve',
+    axiom: 'FX',
+    rules: { X: 'X+YF+', Y: '-FX-Y' },
+    angle: 90,
+    drawLetters: 'F'
+  },
+  sierpinski: {
+    id: 'sierpinski',
+    label: 'Sierpinski (L-system)',
+    axiom: 'A',
+    rules: { A: 'B-A-B', B: 'A+B+A' },
+    angle: 60,
+    drawLetters: 'AB'
+  },
+  hilbert: {
+    id: 'hilbert',
+    label: 'Hilbert Curve',
+    axiom: 'A',
+    rules: { A: '-BF+AFA+FB-', B: '+AF-BFB-FA+' },
+    angle: 90,
+    drawLetters: 'AB'
+  },
+  plant: {
+    id: 'plant',
+    label: 'Plant',
+    axiom: 'F',
+    rules: { F: 'F[+F]F[-F]F' },
+    angle: 25,
+    drawLetters: 'F'
+  },
+  gosper: {
+    id: 'gosper',
+    label: 'Gosper Curve',
+    axiom: 'A',
+    rules: { A: 'A-B--B+A++AA+B-', B: '+A-BB--B-A++A+B' },
+    angle: 60,
+    drawLetters: 'AB'
+  },
+  peano: {
+    id: 'peano',
+    label: 'Peano Curve',
+    axiom: 'A',
+    rules: {
+      A: 'AFBFA+F+BFAFB-F-AFBFA',
+      B: 'AFBFA-F-BFAFB+F+AFBFA'
+    },
+    angle: 90,
+    drawLetters: 'AB'
+  },
+  custom: {
+    id: 'custom',
+    label: 'Custom L-system',
+    axiom: 'F',
+    rules: { F: 'F+F--F+F' },
+    angle: 90,
+    drawLetters: 'F'
+  }
+};
+
+function toCommandsFromDef(def: FractalDef, iterations: number) {
+  const s = lsystem(def.axiom, def.rules, iterations);
+  if (def.drawLetters) {
+    const escaped = def.drawLetters.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return s.replace(new RegExp('[' + escaped + ']', 'g'), 'F');
+  }
+  return s;
 }
 
 function normalize(points: Point[], width: number, height: number, padding = 8) {
@@ -61,38 +195,21 @@ function normalize(points: Point[], width: number, height: number, padding = 8) 
 }
 
 export function generateFractalPoints(
-  type: FractalType,
+  typeOrDef: FractalType | FractalDef,
   iterations: number,
   step = 8,
   width = 800,
   height = 600
 ) {
-  let pts: Point[] = [];
-  if (type === 'koch') {
-    const axiom = 'F';
-    const rules = { F: 'F+F--F+F' };
-    const s = lsystem(axiom, rules, iterations);
-    pts = turtle(s, 60, step);
-  } else if (type === 'dragon') {
-    const axiom = 'FX';
-    const rules: Record<string, string> = { X: 'X+YF+', Y: '-FX-Y' };
-    const s = lsystem(axiom, rules, iterations);
-    pts = turtle(s.replace(/X|Y/g, ''), 90, step);
-  } else if (type === 'sierpinski') {
-    const axiom = 'A';
-    const rules: Record<string, string> = { A: 'B-A-B', B: 'A+B+A' };
-    const s = lsystem(axiom, rules, iterations);
-    pts = turtle(s, 60, step);
-  } else if (type === 'hilbert') {
-    const axiom = 'A';
-    const rules: Record<string, string> = { A: '-BF+AFA+FB-', B: '+AF-BFB-FA+' };
-    const s = lsystem(axiom, rules, iterations);
-    pts = turtle(s.replace(/A|B/g, 'F'), 90, step);
-  } else if (type === 'plant') {
-    const axiom = 'F';
-    const rules: Record<string, string> = { F: 'F[+F]F[-F]F' };
-    const s = lsystem(axiom, rules, iterations);
-    pts = turtle(s, 25, step);
+  let def: FractalDef;
+  if (typeof typeOrDef === 'string') {
+    def = fractals[typeOrDef];
+  } else {
+    def = typeOrDef;
   }
+  if (!def) return [];
+  const commands = toCommandsFromDef(def, iterations);
+  const angle = def.angle ?? 90;
+  const pts = turtle(commands, angle, step);
   return normalize(pts, width, height, 12);
 }

@@ -1,6 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { generateFractalPoints, type FractalType } from "$lib/fractals";
+    import {
+        generateFractalPoints,
+        type FractalType,
+        fractals,
+        parseRulesText,
+        type FractalDef,
+    } from "$lib/fractals";
 
     const types: Array<{ id: FractalType; label: string }> = [
         { id: "koch", label: "Koch Curve / Snowflake" },
@@ -8,9 +14,30 @@
         { id: "sierpinski", label: "Sierpinski (L-system)" },
         { id: "hilbert", label: "Hilbert Curve" },
         { id: "plant", label: "Plant" },
+        { id: "custom", label: "Custom L-system" },
     ];
 
     let type = $state<FractalType>("koch");
+    let currentDef = $state<FractalDef>({ ...fractals["koch"] });
+    let rulesText = $state("");
+
+    // Update currentDef when type changes
+    $effect(() => {
+        currentDef = { ...fractals[type] };
+    });
+
+    // Update rulesText when currentDef.rules changes
+    $effect(() => {
+        rulesText = Object.entries(currentDef.rules)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("\n");
+    });
+
+    // Update currentDef.rules when rulesText changes
+    $effect(() => {
+        currentDef.rules = parseRulesText(rulesText);
+    });
+
     let iterations = $state(3);
     let step = $state(12);
     let strokeWidth = $state(1.5);
@@ -42,7 +69,7 @@
         ctx.strokeStyle = color;
 
         const pts = generateFractalPoints(
-            type,
+            currentDef,
             iterations,
             step,
             width,
@@ -123,6 +150,36 @@
                     iterations = iterations + 1;
                 }}>More iterations</button
             >
+
+            <hr />
+
+            <label for="axiom-input">Axiom</label>
+            <input id="axiom-input" type="text" bind:value={currentDef.axiom} />
+
+            <label for="rules-input">Rules</label>
+            <textarea id="rules-input" bind:value={rulesText}></textarea>
+
+            <label for="angle-input">Angle (degrees):</label>
+            <input
+                id="angle-number-input"
+                type="number"
+                max="360"
+                bind:value={currentDef.angle}
+            />
+            <input
+                id="angle-input"
+                type="range"
+                max="360"
+                step="15"
+                bind:value={currentDef.angle}
+            />
+
+            <label for="draw-letters-input">Draw Letters</label>
+            <input
+                id="draw-letters-input"
+                type="text"
+                bind:value={currentDef.drawLetters}
+            />
         </div>
     </aside>
 
@@ -203,11 +260,18 @@
         cursor: pointer;
     }
     .controls select,
-    .controls input[type="color"] {
+    .controls input[type="color"],
+    .controls input[type="text"],
+    .controls input[type="number"],
+    .controls textarea {
         width: 100%;
         background: #092131;
         color: #d8eefc;
         border: 1px solid #123246;
+    }
+    .controls textarea {
+        resize: vertical;
+        min-height: 60px;
     }
     .controls button {
         padding: 6px 8px;
