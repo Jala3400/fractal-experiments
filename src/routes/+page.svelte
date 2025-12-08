@@ -8,14 +8,10 @@
         type FractalDef,
     } from "$lib/fractals";
 
-    const types: Array<{ id: FractalType; label: string }> = [
-        { id: "koch", label: "Koch Curve / Snowflake" },
-        { id: "dragon", label: "Dragon Curve" },
-        { id: "sierpinski", label: "Sierpinski (L-system)" },
-        { id: "hilbert", label: "Hilbert Curve" },
-        { id: "plant", label: "Plant" },
-        { id: "custom", label: "Custom L-system" },
-    ];
+    const types = Object.entries(fractals).map(([id, fractal]) => ({
+        id,
+        label: fractal.label || id,
+    }));
 
     let type = $state<FractalType>("koch");
     let currentDef = $state<FractalDef>({ ...fractals["koch"] });

@@ -1,7 +1,5 @@
-export type FractalType = 'koch' | 'dragon' | 'sierpinski' | 'hilbert' | 'plant' | 'gosper' | 'peano' | 'custom';
-
 export type FractalDef = {
-  id: FractalType;
+  id: string;
   label?: string;
   axiom: string;
   rules: Record<string, string>;
@@ -88,7 +86,7 @@ export function generateCustomFractalPoints(
 }
 
 // canonical fractal definitions
-export const fractals: Record<FractalType, FractalDef> = {
+export const fractals = {
   koch: {
     id: 'koch',
     label: 'Koch Curve / Snowflake',
@@ -148,6 +146,62 @@ export const fractals: Record<FractalType, FractalDef> = {
     angle: 90,
     drawLetters: 'AB'
   },
+  levy: {
+    id: 'levy',
+    label: 'Levy Curve',
+    axiom: 'F',
+    rules: { F: '+F--F+' },
+    angle: 45,
+    drawLetters: 'F'
+  },
+  quadratic_koch: {
+    id: 'quadratic_koch',
+    label: 'Quadratic Koch',
+    axiom: 'F',
+    rules: { F: 'F+F-F-F+F' },
+    angle: 90,
+    drawLetters: 'F'
+  },
+  pythagoras_tree: {
+    id: 'pythagoras_tree',
+    label: 'Pythagoras Tree',
+    axiom: '0',
+    rules: { '1': '11', '0': '1[+0]-0' },
+    angle: 45,
+    drawLetters: '01'
+  },
+  bush: {
+    id: 'bush',
+    label: 'Bush',
+    axiom: 'F',
+    rules: { F: 'FF-[-F+F+F]+[+F-F-F]' },
+    angle: 22.5,
+    drawLetters: 'F'
+  },
+  crystal: {
+    id: 'crystal',
+    label: 'Crystal',
+    axiom: 'F+F+F+F',
+    rules: { F: 'FF+F++F+F' },
+    angle: 90,
+    drawLetters: 'F'
+  },
+  board: {
+    id: 'board',
+    label: 'Board',
+    axiom: 'F+F+F+F',
+    rules: { F: 'FF+F+F+F+FF' },
+    angle: 90,
+    drawLetters: 'F'
+  },
+  quadratic_snowflake: {
+    id: 'quadratic_snowflake',
+    label: 'Quadratic Snowflake',
+    axiom: 'F',
+    rules: { F: 'F-F+F+F-F' },
+    angle: 90,
+    drawLetters: 'F'
+  },
   custom: {
     id: 'custom',
     label: 'Custom L-system',
@@ -156,7 +210,9 @@ export const fractals: Record<FractalType, FractalDef> = {
     angle: 90,
     drawLetters: 'F'
   }
-};
+} as const;
+
+export type FractalType = keyof typeof fractals;
 
 function toCommandsFromDef(def: FractalDef, iterations: number) {
   const s = lsystem(def.axiom, def.rules, iterations);
