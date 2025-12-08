@@ -34,18 +34,4 @@
         align-items: center;
         gap: 8px;
     }
-
-    .input-row :global(label) {
-        margin: 0;
-        flex-shrink: 0;
-    }
-
-    .input-row :global(input[type="number"]) {
-        width: 80px;
-        flex-shrink: 0;
-    }
-
-    .numeric-control :global(input[type="range"]) {
-        width: 100%;
-    }
 </style>

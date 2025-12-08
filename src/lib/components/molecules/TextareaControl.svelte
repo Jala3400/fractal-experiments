@@ -19,5 +19,7 @@
     }: Props = $props();
 </script>
 
-<Label for={id}>{label}</Label>
-<Textarea {id} bind:value {placeholder} {onchange} />
+<div class="textarea-control">
+    <Label for={id}>{label}</Label>
+    <Textarea {id} bind:value {placeholder} {onchange} />
+</div>

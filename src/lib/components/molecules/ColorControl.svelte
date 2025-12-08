@@ -11,5 +11,7 @@
     let { label, id, value = $bindable() }: Props = $props();
 </script>
 
-<Label for={id}>{label}</Label>
-<Input type="color" {id} bind:value />
+<div class="color-control">
+    <Label for={id}>{label}</Label>
+    <Input type="color" {id} bind:value />
+</div>

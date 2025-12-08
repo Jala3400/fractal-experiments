@@ -12,5 +12,7 @@
     let { label, id, value = $bindable(), options }: Props = $props();
 </script>
 
-<Label for={id}>{label}</Label>
-<Select {id} bind:value {options} />
+<div class="select-control">
+    <Label for={id}>{label}</Label>
+    <Select {id} bind:value {options} />
+</div>

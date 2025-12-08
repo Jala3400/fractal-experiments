@@ -12,5 +12,7 @@
     let { label, id, value = $bindable(), placeholder }: Props = $props();
 </script>
 
-<Label for={id}>{label}</Label>
-<Input type="text" {id} bind:value {placeholder} />
+<div class="text-control">
+    <Label for={id}>{label}</Label>
+    <Input type="text" {id} bind:value {placeholder} />
+</div>

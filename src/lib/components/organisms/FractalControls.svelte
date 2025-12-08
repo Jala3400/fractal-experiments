@@ -103,3 +103,21 @@
         bind:value={currentDef.drawLetters}
     />
 </div>
+
+<style>
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+        color: #d8eefc;
+        box-sizing: border-box;
+        width: 250px;
+    }
+
+    .controls hr {
+        border: none;
+        border-top: 1px solid #123246;
+        margin: 8px 0;
+    }
+</style>

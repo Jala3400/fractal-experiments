@@ -29,6 +29,8 @@
         background: #092131;
         color: #d8eefc;
         border: 1px solid #123246;
+        width: 100%;
+        margin: 0;
     }
 
     input[type="range"] {
