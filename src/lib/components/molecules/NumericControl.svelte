@@ -31,7 +31,7 @@
 
     .input-row {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         gap: 8px;
     }
 </style>

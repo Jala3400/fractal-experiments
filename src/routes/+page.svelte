@@ -115,6 +115,7 @@
         background: var(--bg-primary);
         color: var(--text-primary);
         height: 100%;
+        overflow: hidden;
     }
     .sidebar {
         padding: 8px;

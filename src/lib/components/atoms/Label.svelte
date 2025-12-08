@@ -14,7 +14,7 @@
 <style>
     label {
         display: block;
-        margin: 8px 0 4px;
+        margin: 4px 0;
         font-size: 0.9rem;
         color: var(--text-secondary);
 
