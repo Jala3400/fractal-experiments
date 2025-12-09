@@ -18,7 +18,6 @@
         currentDef?: FractalDef;
         rulesText?: string;
         iterations?: number;
-        step?: number;
         strokeWidth?: number;
         color?: string;
         updateRules?: () => void;
@@ -29,7 +28,6 @@
         currentDef = $bindable<FractalDef>({ ...fractals["koch"] }),
         rulesText = $bindable(""),
         iterations = $bindable(3),
-        step = $bindable(12),
         strokeWidth = $bindable(1.5),
         color = $bindable("#ff6b6b"),
         updateRules = () => {
@@ -57,14 +55,6 @@
         bind:value={iterations}
         min={0}
         max={12}
-    />
-
-    <NumericControl
-        label="Segment length"
-        id="step-input"
-        bind:value={step}
-        min={1}
-        max={128}
     />
 
     <NumericControl

@@ -86,7 +86,7 @@ export function generateCustomFractalPoints(
     const escaped = drawLetters.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
     const commands = s.replace(new RegExp("[" + escaped + "]", "g"), "F");
     const pts = turtle(commands, angle, step);
-    return normalize(pts, width, height, 12);
+    return normalize(pts, width, height);
 }
 
 // canonical fractal definitions
@@ -234,7 +234,6 @@ function normalize(
     points: Point[],
     width: number,
     height: number,
-    padding = 8
 ) {
     if (points.length === 0) return points;
     let minX = Infinity,
@@ -249,8 +248,8 @@ function normalize(
     }
     const w = maxX - minX || 1;
     const h = maxY - minY || 1;
-    const availW = Math.max(1, width - padding * 2);
-    const availH = Math.max(1, height - padding * 2);
+    const availW = Math.max(1, width);
+    const availH = Math.max(1, height);
     const scale = Math.min(availW / w, availH / h);
     const cx = (minX + maxX) / 2;
     const cy = (minY + maxY) / 2;
@@ -265,7 +264,6 @@ function normalize(
 export function generateFractalPoints(
     typeOrDef: FractalType | FractalDef,
     iterations: number,
-    step = 8,
     width = 800,
     height = 600
 ) {
@@ -278,6 +276,6 @@ export function generateFractalPoints(
     if (!def) return [];
     const commands = toCommandsFromDef(def, iterations);
     const angle = def.angle ?? 90;
-    const pts = turtle(commands, angle, step);
-    return normalize(pts, width, height, 12);
+    const pts = turtle(commands, angle, 8);
+    return normalize(pts, width, height);
 }

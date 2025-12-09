@@ -31,7 +31,6 @@
     }
 
     let iterations = $state(3);
-    let step = $state(12);
     let strokeWidth = $state(1.5);
     let color = $state("#ff6b6b");
     let width = $state(800);
@@ -39,7 +38,7 @@
     let canvas = $state<HTMLCanvasElement | null>(null);
 
     // New state for zoom and pan
-    let zoom = $state(1);
+    let zoom = $state(0.8);
     let offsetX = $state(0);
     let offsetY = $state(0);
     let dragging = $state(false);
@@ -71,7 +70,6 @@
         const pts = generateFractalPoints(
             currentDef,
             iterations,
-            step,
             width,
             height
         );
@@ -104,19 +102,19 @@
 
         // Keydown handler for reset
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.ctrlKey && event.key === '0') {
+            if (event.ctrlKey && event.key === "0") {
                 event.preventDefault();
-                zoom = 1;
+                zoom = 0.8;
                 offsetX = 0;
                 offsetY = 0;
                 draw();
             }
         };
-        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
 
         return () => {
             resizeObserver.disconnect();
-            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener("keydown", handleKeyDown);
         };
     });
 
@@ -192,7 +190,6 @@
             bind:currentDef
             bind:rulesText
             bind:iterations
-            bind:step
             bind:strokeWidth
             bind:color
             {updateRules}
