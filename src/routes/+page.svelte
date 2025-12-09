@@ -38,6 +38,14 @@
     let height = $state(600);
     let canvas = $state<HTMLCanvasElement | null>(null);
 
+    // New state for zoom and pan
+    let zoom = $state(1);
+    let offsetX = $state(0);
+    let offsetY = $state(0);
+    let dragging = $state(false);
+    let lastMouseX = $state(0);
+    let lastMouseY = $state(0);
+
     function draw() {
         if (!canvas) return;
         const ctx = canvas.getContext("2d");
@@ -69,9 +77,17 @@
         );
         // we no longer keep debug state here
         if (pts.length < 2) return;
+
+        // Apply zoom and pan to points
+        const transformedPts = pts.map((p) => ({
+            x: (p.x - width / 2) * zoom + width / 2 + offsetX,
+            y: (p.y - height / 2) * zoom + height / 2 + offsetY,
+        }));
+
         ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.moveTo(transformedPts[0].x, transformedPts[0].y);
+        for (let i = 1; i < transformedPts.length; i++)
+            ctx.lineTo(transformedPts[i].x, transformedPts[i].y);
         ctx.stroke();
     }
 
@@ -87,6 +103,57 @@
         if (canvas) resizeObserver.observe(canvas);
         return () => resizeObserver.disconnect();
     });
+
+    // Zoom handler with mouse position consideration
+    function handleWheel(event: WheelEvent) {
+        event.preventDefault();
+        const rect = canvas!.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // World coordinates before zoom (relative to center)
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const worldX = (mouseX - centerX - offsetX) / zoom + centerX;
+        const worldY = (mouseY - centerY - offsetY) / zoom + centerY;
+
+        // Zoom factor
+        const factor = event.deltaY > 0 ? 0.9 : 1.1;
+        zoom *= factor;
+
+        // Adjust offset to keep mouse position fixed
+        offsetX = mouseX - (worldX - centerX) * zoom - centerX;
+        offsetY = mouseY - (worldY - centerY) * zoom - centerY;
+
+        draw();
+    }
+
+    // Pan handlers
+    function handleMouseDown(event: MouseEvent) {
+        dragging = true;
+        const rect = canvas!.getBoundingClientRect();
+        lastMouseX = event.clientX - rect.left;
+        lastMouseY = event.clientY - rect.top;
+    }
+
+    function handleMouseMove(event: MouseEvent) {
+        if (!dragging) return;
+        const rect = canvas!.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        offsetX += mouseX - lastMouseX;
+        offsetY += mouseY - lastMouseY;
+
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+
+        draw();
+    }
+
+    function handleMouseUp() {
+        dragging = false;
+    }
 </script>
 
 <div class="page">
@@ -105,7 +172,15 @@
     </aside>
 
     <div class="canvas-wrap">
-        <canvas bind:this={canvas} class="canvas-class"></canvas>
+        <canvas
+            bind:this={canvas}
+            class="canvas-class"
+            onwheel={handleWheel}
+            onmousedown={handleMouseDown}
+            onmousemove={handleMouseMove}
+            onmouseup={handleMouseUp}
+            onmouseleave={handleMouseUp}
+        ></canvas>
     </div>
 </div>
 
@@ -134,7 +209,12 @@
     }
 
     .canvas-class {
-        width: 80%;
-        height: 80%;
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+    }
+
+    .canvas-class:active {
+        cursor: grabbing;
     }
 </style>
