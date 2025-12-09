@@ -62,12 +62,7 @@
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        // handle high DPI displays
-        const dpr =
-            typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-        canvas.width = Math.max(1, Math.floor(width * dpr));
-        canvas.height = Math.max(1, Math.floor(height * dpr));
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
 
         ctx.lineWidth = strokeWidth;
         ctx.lineCap = "round";
@@ -75,7 +70,6 @@
         ctx.strokeStyle = color;
 
         const pts = fractalPoints;
-        // we no longer keep debug state here
         if (pts.length < 2) return;
 
         // Apply zoom and pan to points
@@ -98,6 +92,12 @@
                 const rect = canvas.getBoundingClientRect();
                 width = rect.width;
                 height = rect.height;
+                // Set canvas size for high DPI displays
+                const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+                canvas.width = Math.max(1, Math.floor(width * dpr));
+                canvas.height = Math.max(1, Math.floor(height * dpr));
+                const ctx = canvas.getContext("2d");
+                if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             }
         });
         if (canvas) resizeObserver.observe(canvas);
@@ -107,6 +107,12 @@
             const rect = canvas.getBoundingClientRect();
             width = rect.width;
             height = rect.height;
+            // Set canvas size for high DPI displays
+            const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+            canvas.width = Math.max(1, Math.floor(width * dpr));
+            canvas.height = Math.max(1, Math.floor(height * dpr));
+            const ctx = canvas.getContext("2d");
+            if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
         // Keydown handler for reset
