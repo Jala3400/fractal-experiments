@@ -101,30 +101,58 @@
             if (canvas) draw();
         });
         if (canvas) resizeObserver.observe(canvas);
-        return () => resizeObserver.disconnect();
+
+        // Keydown handler for reset
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.ctrlKey && event.key === '0') {
+                event.preventDefault();
+                zoom = 1;
+                offsetX = 0;
+                offsetY = 0;
+                draw();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     });
 
-    // Zoom handler with mouse position consideration
+    // Wheel handler: pan with wheel, zoom with ctrl+wheel
     function handleWheel(event: WheelEvent) {
         event.preventDefault();
-        const rect = canvas!.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        if (event.ctrlKey) {
+            // Zoom
+            const rect = canvas!.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
 
-        // World coordinates before zoom (relative to center)
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const worldX = (mouseX - centerX - offsetX) / zoom + centerX;
-        const worldY = (mouseY - centerY - offsetY) / zoom + centerY;
+            // World coordinates before zoom (relative to center)
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const worldX = (mouseX - centerX - offsetX) / zoom + centerX;
+            const worldY = (mouseY - centerY - offsetY) / zoom + centerY;
 
-        // Zoom factor
-        const factor = event.deltaY > 0 ? 0.9 : 1.1;
-        zoom *= factor;
+            // Zoom factor
+            const factor = event.deltaY > 0 ? 0.9 : 1.1;
+            zoom *= factor;
 
-        // Adjust offset to keep mouse position fixed
-        offsetX = mouseX - (worldX - centerX) * zoom - centerX;
-        offsetY = mouseY - (worldY - centerY) * zoom - centerY;
-
+            // Adjust offset to keep mouse position fixed
+            offsetX = mouseX - (worldX - centerX) * zoom - centerX;
+            offsetY = mouseY - (worldY - centerY) * zoom - centerY;
+        } else {
+            // Pan
+            if (event.shiftKey) {
+                // Shift + wheel: horizontal pan
+                offsetX -= event.deltaY * 0.5;
+            } else {
+                // Normal pan
+                offsetX -= event.deltaX * 0.5;
+                offsetY -= event.deltaY * 0.5;
+            }
+        }
         draw();
     }
 
