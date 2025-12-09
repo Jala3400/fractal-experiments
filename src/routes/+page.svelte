@@ -37,6 +37,18 @@
     let height = $state(600);
     let canvas = $state<HTMLCanvasElement | null>(null);
 
+    // Reactive fractal points - only regenerate when parameters change
+    let fractalPoints = $derived(
+        generateFractalPoints(currentDef, iterations, width, height)
+    );
+
+    $effect(() => {
+        if (!canvas) return;
+
+        // Reacts to every parameter change inside of draw()
+        draw();
+    });
+
     // New state for zoom and pan
     let zoom = $state(0.8);
     let offsetX = $state(0);
@@ -50,11 +62,6 @@
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        // Get container size
-        const rect = canvas.getBoundingClientRect();
-        width = rect.width;
-        height = rect.height;
-
         // handle high DPI displays
         const dpr =
             typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
@@ -67,12 +74,7 @@
         ctx.lineJoin = "round";
         ctx.strokeStyle = color;
 
-        const pts = generateFractalPoints(
-            currentDef,
-            iterations,
-            width,
-            height
-        );
+        const pts = fractalPoints;
         // we no longer keep debug state here
         if (pts.length < 2) return;
 
@@ -89,16 +91,23 @@
         ctx.stroke();
     }
 
-    $effect(() => {
-        if (canvas) draw();
-    });
-
     onMount(() => {
-        // Resize observer to redraw on container size change
+        // Resize observer to update size and redraw on container size change
         const resizeObserver = new ResizeObserver(() => {
-            if (canvas) draw();
+            if (canvas) {
+                const rect = canvas.getBoundingClientRect();
+                width = rect.width;
+                height = rect.height;
+            }
         });
         if (canvas) resizeObserver.observe(canvas);
+
+        // Set initial canvas size
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            width = rect.width;
+            height = rect.height;
+        }
 
         // Keydown handler for reset
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -107,7 +116,6 @@
                 zoom = 0.8;
                 offsetX = 0;
                 offsetY = 0;
-                draw();
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -118,7 +126,6 @@
         };
     });
 
-    // Wheel handler: pan with wheel, zoom with ctrl+wheel
     function handleWheel(event: WheelEvent) {
         event.preventDefault();
         if (event.ctrlKey) {
@@ -151,7 +158,6 @@
                 offsetY -= event.deltaY * 0.5;
             }
         }
-        draw();
     }
 
     // Pan handlers
@@ -173,8 +179,6 @@
 
         lastMouseX = mouseX;
         lastMouseY = mouseY;
-
-        draw();
     }
 
     function handleMouseUp() {
