@@ -54,6 +54,7 @@
     let zoom = $state(0.8);
     let offsetX = $state(0);
     let offsetY = $state(0);
+    let rotation = $state(0);
     let dragging = $state(false);
     let lastMouseX = $state(0);
     let lastMouseY = $state(0);
@@ -73,11 +74,29 @@
         const pts = fractalPoints;
         if (pts.length < 2) return;
 
-        // Apply zoom and pan to points
-        const transformedPts = pts.map((p) => ({
-            x: (p.x - width / 2) * zoom + width / 2 + offsetX,
-            y: (p.y - height / 2) * zoom + height / 2 + offsetY,
-        }));
+        // Apply zoom, pan, and rotation to points
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const rotationRad = (rotation * Math.PI) / 180;
+        
+        const transformedPts = pts.map((p) => {
+            // Skip NaN markers
+            if (isNaN(p.x) || isNaN(p.y)) return { x: NaN, y: NaN };
+            
+            // Translate to origin
+            let x = p.x - centerX;
+            let y = p.y - centerY;
+            
+            // Apply rotation
+            const rotX = x * Math.cos(rotationRad) - y * Math.sin(rotationRad);
+            const rotY = x * Math.sin(rotationRad) + y * Math.cos(rotationRad);
+            
+            // Apply zoom and pan
+            return {
+                x: (rotX * zoom) + centerX + offsetX,
+                y: (rotY * zoom) + centerY + offsetY,
+            };
+        });
 
         ctx.beginPath();
         let needsMove = true;
@@ -142,6 +161,7 @@
                 zoom = 0.8;
                 offsetX = 0;
                 offsetY = 0;
+                rotation = 0;
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -222,6 +242,7 @@
             bind:iterations
             bind:strokeWidth
             bind:color
+            bind:rotation
             {updateRules}
         />
     </aside>

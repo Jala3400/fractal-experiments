@@ -20,6 +20,7 @@
         iterations?: number;
         strokeWidth?: number;
         color?: string;
+        rotation?: number;
         updateRules?: () => void;
     }
 
@@ -30,6 +31,7 @@
         iterations = $bindable(3),
         strokeWidth = $bindable(1.5),
         color = $bindable("#ff6b6b"),
+        rotation = $bindable(0),
         updateRules = () => {
             currentDef.rules = parseRulesText(rulesText);
         },
@@ -66,6 +68,15 @@
         step={0.5}
     />
 
+    <NumericControl
+        label="Rotation (degrees)"
+        id="rotation-input"
+        bind:value={rotation}
+        min={0}
+        max={360}
+        step={5}
+    />
+
     <ColorControl label="Color" id="color-input" bind:value={color} />
 
     <hr />
@@ -83,8 +94,9 @@
         label="Angle (degrees)"
         id="angle-input"
         bind:value={currentDef.angle}
+        min={0}
         max={360}
-        step={15}
+        step={5}
     />
 
     <TextControl
