@@ -16,13 +16,29 @@
         value = $bindable(),
         min,
         max,
-        step,
+        step = 1,
         placeholder,
         onchange,
     }: Props = $props();
+
+    function handleWheel(event: WheelEvent) {
+        if (type !== "number") return;
+        
+        event.preventDefault();
+        
+        const direction = event.deltaY > 0 ? -1 : 1;
+        const currentValue = typeof value === "number" ? value : parseFloat(value) || 0;
+        let newValue = currentValue + direction * step;
+        
+        // Clamp to min/max bounds
+        if (min !== undefined) newValue = Math.max(newValue, min);
+        if (max !== undefined) newValue = Math.min(newValue, max);
+        
+        value = newValue;
+    }
 </script>
 
-<input {type} {id} bind:value {min} {max} {step} {placeholder} {onchange} />
+<input {type} {id} bind:value {min} {max} {step} {placeholder} {onchange} onwheel={handleWheel} />
 
 <style>
     input {
