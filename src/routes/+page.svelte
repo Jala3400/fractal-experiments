@@ -15,6 +15,7 @@
 
     // Update currentDef when type changes
     $effect(() => {
+        iterations = 3; // Reset iterations on type change
         currentDef = { ...fractals[type] };
     });
 
