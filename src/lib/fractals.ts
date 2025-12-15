@@ -48,6 +48,8 @@ function turtle(commands: string, angleDeg: number, step: number) {
                 x = s.x;
                 y = s.y;
                 angle = s.angle;
+                // Use NaN as a path break marker (pen up), then start new segment
+                pts.push({ x: NaN, y: NaN });
                 pts.push({ x, y });
             }
         }
@@ -167,8 +169,8 @@ export const fractals = {
         drawLetters: "F",
     },
     pythagoras_tree: {
-        id: "pythagoras_tree",
-        label: "Pythagoras Tree",
+        id: "binary_tree",
+        label: "Binary Tree",
         axiom: "0",
         rules: { "1": "11", "0": "1[+0]-0" },
         angle: 45,
@@ -201,7 +203,7 @@ export const fractals = {
     quadratic_snowflake: {
         id: "quadratic_snowflake",
         label: "Quadratic Snowflake",
-        axiom: "F",
+        axiom: "F+F+F+F",
         rules: { F: "F-F+F+F-F" },
         angle: 90,
         drawLetters: "F",
@@ -241,6 +243,8 @@ function normalize(
         maxX = -Infinity,
         maxY = -Infinity;
     for (const p of points) {
+        // Skip NaN markers when computing bounds
+        if (isNaN(p.x) || isNaN(p.y)) continue;
         if (p.x < minX) minX = p.x;
         if (p.y < minY) minY = p.y;
         if (p.x > maxX) maxX = p.x;
@@ -255,10 +259,14 @@ function normalize(
     const cy = (minY + maxY) / 2;
     const tx = width / 2;
     const ty = height / 2;
-    return points.map((p) => ({
-        x: tx + (p.x - cx) * scale,
-        y: ty + (p.y - cy) * scale,
-    }));
+    return points.map((p) => {
+        // Preserve NaN markers as path breaks
+        if (isNaN(p.x) || isNaN(p.y)) return { x: NaN, y: NaN };
+        return {
+            x: tx + (p.x - cx) * scale,
+            y: ty + (p.y - cy) * scale,
+        };
+    });
 }
 
 export function generateFractalPoints(

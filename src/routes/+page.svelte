@@ -80,9 +80,21 @@
         }));
 
         ctx.beginPath();
-        ctx.moveTo(transformedPts[0].x, transformedPts[0].y);
-        for (let i = 1; i < transformedPts.length; i++)
-            ctx.lineTo(transformedPts[i].x, transformedPts[i].y);
+        let needsMove = true;
+        for (let i = 0; i < transformedPts.length; i++) {
+            const p = transformedPts[i];
+            // NaN indicates a path break (pen up)
+            if (isNaN(p.x) || isNaN(p.y)) {
+                needsMove = true;
+                continue;
+            }
+            if (needsMove) {
+                ctx.moveTo(p.x, p.y);
+                needsMove = false;
+            } else {
+                ctx.lineTo(p.x, p.y);
+            }
+        }
         ctx.stroke();
     }
 
