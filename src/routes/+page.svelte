@@ -93,11 +93,15 @@
                 width = rect.width;
                 height = rect.height;
                 // Set canvas size for high DPI displays
-                const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+                const dpr =
+                    typeof window !== "undefined"
+                        ? window.devicePixelRatio || 1
+                        : 1;
                 canvas.width = Math.max(1, Math.floor(width * dpr));
                 canvas.height = Math.max(1, Math.floor(height * dpr));
                 const ctx = canvas.getContext("2d");
                 if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                draw();
             }
         });
         if (canvas) resizeObserver.observe(canvas);
@@ -108,7 +112,10 @@
             width = rect.width;
             height = rect.height;
             // Set canvas size for high DPI displays
-            const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+            const dpr =
+                typeof window !== "undefined"
+                    ? window.devicePixelRatio || 1
+                    : 1;
             canvas.width = Math.max(1, Math.floor(width * dpr));
             canvas.height = Math.max(1, Math.floor(height * dpr));
             const ctx = canvas.getContext("2d");
