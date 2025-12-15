@@ -144,13 +144,13 @@ export const fractals = {
     peano: {
         id: "peano",
         label: "Peano Curve",
-        axiom: "A",
+        axiom: "X",
         rules: {
-            A: "AFBFA+F+BFAFB-F-AFBFA",
-            B: "AFBFA-F-BFAFB+F+AFBFA",
+            X: "XFYFX+F+YFXFY-F-XFYFX",
+            Y: "YFXFY-F-XFYFX+F+YFXFY",
         },
         angle: 90,
-        drawLetters: "AB",
+        drawLetters: "F",
     },
     levy: {
         id: "levy",
@@ -200,22 +200,6 @@ export const fractals = {
         angle: 90,
         drawLetters: "F",
     },
-    quadratic_snowflake: {
-        id: "quadratic_snowflake",
-        label: "Quadratic Snowflake",
-        axiom: "F+F+F+F",
-        rules: { F: "F-F+F+F-F" },
-        angle: 90,
-        drawLetters: "F",
-    },
-    custom: {
-        id: "custom",
-        label: "Custom L-system",
-        axiom: "F",
-        rules: { F: "F+F--F+F" },
-        angle: 90,
-        drawLetters: "F",
-    },
 } as const;
 
 export type FractalType = keyof typeof fractals;
@@ -232,11 +216,7 @@ function toCommandsFromDef(def: FractalDef, iterations: number) {
     return s;
 }
 
-function normalize(
-    points: Point[],
-    width: number,
-    height: number,
-) {
+function normalize(points: Point[], width: number, height: number) {
     if (points.length === 0) return points;
     let minX = Infinity,
         minY = Infinity,
