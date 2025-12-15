@@ -1,38 +1,93 @@
-# sv
+# Fractal Experiments
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+![Fractal Experiments](./images/image.png)
 
-## Creating a project
+A Svelte-based web application for exploring and visualizing fractals with interactive controls and real-time rendering.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Project Overview
+
+This project provides an interactive environment for generating and experimenting with fractals. It features a modern UI built with Svelte and SvelteKit, allowing users to adjust parameters and see the results instantly.
+
+It is a side project in early development.
+
+## Index
+
+- [Fractal Experiments](#fractal-experiments)
+  - [Project Overview](#project-overview)
+  - [Index](#index)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Development](#development)
+    - [Building](#building)
+  - [Project Structure](#project-structure)
+
+## Features
+
+- **Interactive Fractal Controls** - Adjust fractal parameters in real-time
+- **Visual Feedback** - Instant rendering updates as you modify settings
+- **Modular Components** - Well-organized atomic, molecular, and organism-based UI components
+
+## Tech Stack
+
+- **Framework**: Svelte + SvelteKit
+- **Language**: TypeScript
+- **Build Tool**: Vite
+- **Package Manager**: pnpm
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+- pnpm
+
+### Installation
 
 ```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+# Install dependencies
+pnpm install
 ```
 
-## Developing
+### Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Start the development server:
 
 ```sh
-npm run dev
+pnpm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Open in browser (optional)
+pnpm run dev -- --open
 ```
 
-## Building
+The app will be available at `http://localhost:5173`
 
-To create a production version of your app:
+### Building
+
+To create a production build:
 
 ```sh
-npm run build
+pnpm run build
 ```
 
-You can preview the production build with `npm run preview`.
+Preview the production build:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+pnpm run preview
+```
+
+## Project Structure
+
+```txt
+src/
+├── lib/
+│   ├── components/       # Reusable UI components
+│   │   ├── atoms/        # Basic components (Button, Input, etc.)
+│   │   ├── molecules/    # Composite components (Controls)
+│   │   └── organisms/    # Complex components (FractalControls)
+│   ├── fractals.ts       # Fractal generation logic
+├── routes/               # SvelteKit pages and layouts
+└── app.css               # Global styles
+```
