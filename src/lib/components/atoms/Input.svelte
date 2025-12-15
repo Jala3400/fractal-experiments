@@ -8,6 +8,7 @@
         step?: number;
         placeholder?: string;
         onchange?: (event: Event) => void;
+        circular?: boolean;
     }
 
     let {
@@ -19,6 +20,7 @@
         step = 1,
         placeholder,
         onchange,
+        circular = false,
     }: Props = $props();
 
     function handleWheel(event: WheelEvent) {
@@ -30,9 +32,15 @@
         const currentValue = typeof value === "number" ? value : parseFloat(value) || 0;
         let newValue = currentValue + direction * step;
         
-        // Clamp to min/max bounds
-        if (min !== undefined) newValue = Math.max(newValue, min);
-        if (max !== undefined) newValue = Math.min(newValue, max);
+        if (circular && min !== undefined && max !== undefined) {
+            // Wrap around circularly
+            const range = max - min;
+            newValue = ((newValue - min) % range + range) % range + min;
+        } else {
+            // Clamp to min/max bounds
+            if (min !== undefined) newValue = Math.max(newValue, min);
+            if (max !== undefined) newValue = Math.min(newValue, max);
+        }
         
         value = newValue;
     }

@@ -75,6 +75,7 @@
         min={0}
         max={360}
         step={5}
+        circular={true}
     />
 
     <ColorControl label="Color" id="color-input" bind:value={color} />
@@ -97,6 +98,7 @@
         min={0}
         max={360}
         step={5}
+        circular={true}
     />
 
     <TextControl

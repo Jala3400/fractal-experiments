@@ -9,17 +9,18 @@
         min?: number;
         max?: number;
         step?: number;
+        circular?: boolean;
     }
 
-    let { label, id, value = $bindable(), min, max, step }: Props = $props();
+    let { label, id, value = $bindable(), min, max, step, circular = false }: Props = $props();
 </script>
 
 <div class="numeric-control">
     <div class="input-row">
         <Label for={id}>{label}</Label>
-        <Input type="number" {id} bind:value {min} {max} {step} />
+        <Input type="number" {id} bind:value {min} {max} {step} {circular} />
     </div>
-    <Input type="range" id="{id}-slider" bind:value {min} {max} {step} />
+    <Input type="range" id="{id}-slider" bind:value {min} {max} {step} {circular} />
 </div>
 
 <style>
